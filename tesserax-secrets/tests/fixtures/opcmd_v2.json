@@ -1,0 +1,7 @@
+{
+  "expires_at_unix": 1790799318,
+  "payload_b64": "eyJvcCI6Imxpc3QiLCJsaW1pdCI6NTB9",
+  "request_id": "golden-request-0001",
+  "signature_b64": "i88a32fSR7RfQ5I1OuJTuFaP3J25Qbs3S1CjiKq6VuPY6m265Cn-s1ch5tYdzjijr5hlaPEc3HP5jGim0twHBA",
+  "signer_id": "golden-operator"
+}

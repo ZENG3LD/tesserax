@@ -1,0 +1,50 @@
+[package]
+name = "tesserax-secrets"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Secrets at rest and signing for tesserax services: host-bound sealing, daemon identity, signed operator commands, Shamir sharing, tripwire, key sources."
+keywords = ["secrets", "sealing", "ed25519", "shamir", "server"]
+categories = ["cryptography", "authentication"]
+readme = "README.md"
+
+[features]
+default = []
+# Process hardening (prctl / mlockall / setrlimit): the only unsafe code.
+hardening = ["dep:libc"]
+# Operator tooling over HTTP and the tesserax-opctl binary.
+opctl = ["dep:reqwest", "dep:tokio", "dep:clap"]
+# Signed trust gossip between services (HTTP push needs `opctl` too).
+peer-trust = []
+
+[dependencies]
+tesserax = { path = "../tesserax", version = "0.1.0", default-features = false }
+sha2 = "0.10"
+blake3 = "1"
+chacha20poly1305 = "0.10"
+aes-gcm = "0.10"
+hkdf = "0.12"
+ed25519-dalek = "2"
+zeroize = { version = "1", features = ["derive"] }
+getrandom = "0.3"
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"], optional = true }
+tokio = { version = "1", features = ["rt", "macros"], optional = true }
+clap = { version = "4", features = ["derive"], optional = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { version = "0.2", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros", "net", "io-util"] }
+
+[[bin]]
+name = "tesserax-opctl"
+path = "src/bin/tesserax-opctl.rs"
+required-features = ["opctl"]

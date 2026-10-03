@@ -1,0 +1,5 @@
+tesserax-resp-v1
+1700000000
+200
+/admin/info
+golden-body-hash

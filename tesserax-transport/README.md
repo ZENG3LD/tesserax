@@ -1,0 +1,7 @@
+# tesserax-transport
+
+Link IO for services built with `tesserax`. `OwnerOnlyListener` and `connect_local` give an owner-only local link: on Unix a domain socket in a `0700` directory, mode `0600`, guarded by a per-endpoint lock file, stale sockets replaced safely, peer uid checked on both ends; on Windows a named pipe whose DACL admits only the current user and LocalSystem. `proof::link_proof` is the HMAC-SHA256 both ends of a link exchange over both nonces, bound to a caller-supplied `LinkContext` (protocol domain plus negotiated binding), so a proof never carries over to another protocol, direction, role or negotiation. `call_home` is the one-frame preface a peer that dialled out sends to name itself before the handshake.
+
+With the default feature `server`, `TransportExt::with_ipc` serves a `tesserax::ServerBuilder` over the owner-only socket through the root's listener-driver hook; feature `tls` adds `with_tls` (rustls, HTTP/1.1 and HTTP/2, handshake deadline, graceful drain), client-certificate pins and a pinned client configuration. Feature `egress` adds outbound clients: a webhook sender with retry and an optional signature that `tesserax-http`'s verifier accepts, an ESMTP client (STARTTLS or implicit TLS, AUTH PLAIN / LOGIN) behind a `Mailer` trait, and a small Telegram Bot API client. Every HMAC, digest and secret comparison goes through `tesserax::ct`; the only `unsafe` code is the Windows pipe security descriptor.
+
+Licensed under either of MIT or Apache-2.0, at your option.

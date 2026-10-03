@@ -1,0 +1,47 @@
+[package]
+name = "tesserax-store"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "SQLite persistence for tesserax services: one writer, bounded read pool, batch writer, checkpointer, migrations, hash-chained audit log, atomic files, optional encryption and an embedded time-series store."
+keywords = ["sqlite", "storage", "audit", "single-writer", "timeseries"]
+categories = ["database"]
+readme = "README.md"
+
+[features]
+default = []
+# DbPool: N interchangeable connections (async acquire, RAII guard).
+pool = []
+# FieldCipher: XChaCha20-Poly1305 per-column encryption in application
+# code, keyed by a tesserax-secrets KeySource. Plain SQLite build.
+cipher-applite = ["dep:tesserax-secrets", "dep:chacha20poly1305", "dep:blake3", "dep:getrandom", "dep:zeroize"]
+# DbConfig::EncryptedNative: whole-file SQLCipher keyed by a KeySource.
+# Builds SQLCipher from source and links the system libcrypto (OpenSSL
+# headers needed at build time); not for Windows-native builds.
+# Mutually exclusive with cipher-applite (compile_error! guard).
+cipher-native = ["dep:tesserax-secrets", "dep:zeroize", "rusqlite/bundled-sqlcipher"]
+# Embedded time-series store (Gorilla chunks in a SQLite index).
+tsdb = ["dep:blake3"]
+
+[dependencies]
+tesserax = { path = "../tesserax", version = "0.1.0", default-features = false, features = ["serde"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+tokio = { version = "1", default-features = false, features = ["rt", "sync", "time", "macros"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = { version = "0.8", default-features = false, features = ["display"] }
+tesserax-secrets = { path = "../tesserax-secrets", version = "0.1.0", optional = true }
+chacha20poly1305 = { version = "0.10", optional = true }
+blake3 = { version = "1", optional = true }
+getrandom = { version = "0.3", optional = true }
+zeroize = { version = "1", optional = true }
+
+[dev-dependencies]
+# The read-deadline cancellation test counts VM steps through a custom SQL
+# function; the library itself does not need `functions`.
+rusqlite = { version = "0.32", features = ["bundled", "functions"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }

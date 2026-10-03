@@ -1,0 +1,58 @@
+[package]
+name = "tesserax-transport"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Link IO for tesserax services: owner-only local sockets and pipes, a mutual link proof bound to a caller context, a call-home preface, the Ipc and TLS accept loops of a tesserax server, SPKI pins, and outbound webhook / SMTP / Telegram clients."
+keywords = ["ipc", "tls", "smtp", "webhook", "server"]
+categories = ["network-programming", "web-programming::http-server"]
+readme = "README.md"
+
+[features]
+default = ["server"]
+# The accept loops of a tesserax server: `IpcDriver` (Transport::Ipc over
+# OwnerOnlyListener), `serve_ipc`, `TransportExt::with_ipc`.
+server = ["tesserax/server", "dep:axum", "dep:hyper", "dep:hyper-util", "dep:tower-service", "dep:tracing"]
+# HTTPS: `serve_tls`, `load_server_config`, client-certificate pins,
+# `TlsDriver`, `TransportExt::with_tls`, a pinned client config.
+tls = ["server", "dep:rustls", "dep:tokio-rustls"]
+# Outbound clients: `Webhook` (retry, optional signature), `SmtpClient` +
+# `Mailer`, `TelegramBot`.
+egress = ["dep:reqwest", "dep:rustls", "dep:tokio-rustls", "dep:webpki-roots", "dep:base64", "dep:tracing", "tokio/time"]
+
+[dependencies]
+tesserax = { path = "../tesserax", version = "0.1.0", default-features = false }
+tokio = { version = "1", default-features = false, features = ["net", "io-util", "rt", "sync", "time", "macros"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+getrandom = "0.3"
+axum = { version = "0.8", default-features = false, features = ["http1", "http2", "tokio"], optional = true }
+hyper = { version = "1", default-features = false, features = ["server", "http1", "http2"], optional = true }
+hyper-util = { version = "0.1", default-features = false, features = ["server", "server-auto", "tokio", "http1", "http2"], optional = true }
+tower-service = { version = "0.3", optional = true }
+tracing = { version = "0.1", default-features = false, features = ["std"], optional = true }
+rustls = { version = "0.23", default-features = false, features = ["std", "ring", "tls12"], optional = true }
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "tls12"], optional = true }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"], optional = true }
+webpki-roots = { version = "1", optional = true }
+base64 = { version = "0.22", optional = true }
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1", default-features = false, features = ["std", "fs", "process"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_SystemServices",
+    "Win32_System_Threading",
+] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "time"] }
+rcgen = "0.13"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+tesserax-http = { path = "../tesserax-http", version = "0.1.0" }

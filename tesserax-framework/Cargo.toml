@@ -1,0 +1,131 @@
+[package]
+name = "tesserax-framework"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Back-office framework on tesserax: a single-writer kernel with a fixed-phase step, the runtime that owns it, effect executors that report results back as generation-checked observations, and HTTP / local shells plus a remote handle over the same port."
+keywords = ["backend", "server", "framework", "single-writer"]
+categories = ["web-programming::http-server"]
+readme = "README.md"
+
+[features]
+default = []
+# TokioExecutor: effects run as tasks on a tokio runtime the caller owns.
+tokio = ["dep:tokio"]
+# PersistExecutor: effects become tesserax-store BatchWriter operations;
+# the observation is the flush acknowledgement after a durability barrier.
+store = ["dep:tesserax-store"]
+# Transport shells over a port: `shell::http_shell` (a DocRouter whose
+# control and observe doors an AuthGate enforces) and `shell::local_shell`
+# (NDJSON over an owner-only socket / pipe, one link secret per door).
+shell = [
+    "tesserax/serde",
+    "dep:tesserax-auth",
+    "dep:tesserax-http",
+    "dep:tesserax-transport",
+    "dep:axum",
+    "dep:futures-util",
+    "dep:serde",
+    "dep:serde_json",
+    "dep:tokio",
+    "tokio?/net",
+    "tokio?/io-util",
+    "tokio?/sync",
+    "tokio?/macros",
+    "dep:tracing",
+    "dep:zeroize",
+]
+# NCP tier scaffolding (design §5): the shared link / roster / oracle core
+# plus one builder per tier. A binary enables exactly its own tier, so no
+# symbol for the tier above exists in it (NCP §11c: absence, not policy).
+# The shared modules know only "below".
+node = ["ncp-shared"]
+c2 = ["ncp-shared"]
+hq = ["ncp-shared"]
+# `ncp::node::os`: spawn / kill / supervise of the node's services as OS
+# processes. The only module that may name std::process.
+node-os = ["node", "tokio?/process"]
+# internal: shared NCP deps; enabled by any tier feature, never on its own.
+ncp-shared = [
+    "tesserax/serde",
+    "dep:tesserax-transport",
+    "dep:futures-util",
+    "dep:serde",
+    "dep:serde_json",
+    "dep:tokio",
+    "tokio?/net",
+    "tokio?/io-util",
+    "tokio?/sync",
+    "tokio?/macros",
+    "dep:zeroize",
+    "dep:bytes",
+    "dep:http-body-util",
+    "dep:hyper",
+    "dep:hyper-util",
+    "dep:toml",
+]
+# Agent surface (design §3): one `Verb` answers over REST
+# (`POST /v1/verbs/{name}`) and MCP (`tools/call`) from a single
+# registration; every mutating call is audited inside the shared
+# dispatch, so a JSON-RPC batch cannot hide a call from audit.
+agent = [
+    "dep:tesserax-auth",
+    "dep:tesserax-http",
+    "dep:tesserax-mcp",
+    "dep:axum",
+    "dep:futures-util",
+    "dep:serde",
+    "dep:serde_json",
+]
+# `shell::RemoteHandle`: the root `Port` over the wire of either shell
+# (HTTP + SSE, or the owner-only local link).
+client = [
+    "tesserax/serde",
+    "dep:tesserax-transport",
+    "dep:bytes",
+    "dep:http-body-util",
+    "dep:hyper",
+    "dep:hyper-util",
+    "dep:serde",
+    "dep:serde_json",
+    "dep:tokio",
+    "tokio?/net",
+    "tokio?/io-util",
+    "tokio?/sync",
+    "tokio?/macros",
+    "tokio?/rt-multi-thread",
+    "dep:zeroize",
+]
+
+[dependencies]
+tesserax = { path = "../tesserax", version = "0.1.0", default-features = false }
+thiserror = "2"
+tokio = { version = "1", default-features = false, features = ["rt", "time"], optional = true }
+tesserax-store = { path = "../tesserax-store", version = "0.1.0", optional = true }
+tesserax-auth = { path = "../tesserax-auth", version = "0.1.0", optional = true }
+tesserax-http = { path = "../tesserax-http", version = "0.1.0", optional = true }
+tesserax-transport = { path = "../tesserax-transport", version = "0.1.0", default-features = false, optional = true }
+tesserax-mcp = { path = "../tesserax-mcp", version = "0.1.0", optional = true }
+axum = { version = "0.8", default-features = false, features = ["http1", "json", "query", "matched-path", "tokio"], optional = true }
+bytes = { version = "1", optional = true }
+futures-util = { version = "0.3", default-features = false, features = ["std"], optional = true }
+http-body-util = { version = "0.1", optional = true }
+hyper = { version = "1", default-features = false, features = ["client", "http1"], optional = true }
+hyper-util = { version = "0.1", default-features = false, features = ["tokio"], optional = true }
+serde = { version = "1", features = ["derive", "rc"], optional = true }
+serde_json = { version = "1", optional = true }
+tracing = { version = "0.1", default-features = false, features = ["std"], optional = true }
+zeroize = { version = "1", optional = true }
+toml = { version = "0.8", default-features = false, features = ["parse", "display"], optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", default-features = false, features = ["rt-multi-thread", "time", "net", "macros", "io-util", "process", "sync"] }
+axum = { version = "0.8", default-features = false, features = ["http1", "tokio", "json"] }
+http-body-util = "0.1"
+tower = { version = "0.5", default-features = false, features = ["util"] }
+serde_json = "1"
+zeroize = "1"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+tesserax-transport = { path = "../tesserax-transport", version = "0.1.0", features = ["server"] }

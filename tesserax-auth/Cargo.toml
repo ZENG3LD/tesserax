@@ -1,0 +1,30 @@
+[package]
+name = "tesserax-auth"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Authentication for tesserax servers: doors with path policies, hashed key ring, constant-time compare, HMAC-SHA256, derived tokens, auth ban."
+keywords = ["backend", "server", "auth", "api-key"]
+categories = ["web-programming::http-server", "authentication"]
+readme = "README.md"
+
+[features]
+default = ["toml"]
+# KeyRing::from_toml.
+toml = ["dep:toml", "dep:serde"]
+
+[dependencies]
+tesserax = { path = "../tesserax", version = "0.1.0" }
+axum = { version = "0.8", default-features = false, features = ["matched-path", "tokio"] }
+zeroize = "1"
+getrandom = "0.3"
+thiserror = "2"
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+serde = { version = "1", features = ["derive"], optional = true }
+toml = { version = "0.8", default-features = false, features = ["parse"], optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tower = { version = "0.5", default-features = false, features = ["util"] }

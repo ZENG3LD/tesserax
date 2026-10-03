@@ -1,0 +1,35 @@
+[package]
+name = "tesserax"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Back-office core library: single-writer (SWC) contract (envelopes, bounded port, lock-free snapshot edge, resync), pure tier/principal/audit/CIDR types, and a satellite-agnostic axum server builder with layer stages, plugins and lifecycle."
+keywords = ["backend", "server", "framework", "single-writer"]
+categories = ["web-programming::http-server"]
+readme = "README.md"
+
+[features]
+default = ["server"]
+# The shell half: ServerBuilder, Server/RunningServer, lifecycle, config.
+# Without it the crate is types + handle only and compiles for wasm32.
+server = ["serde", "dep:tokio", "dep:axum", "dep:tracing", "dep:serde_json"]
+# serde derives on the SWC envelopes, snapshot, resync reply and the
+# cross-cutting pure types (wire form for remote ports).
+serde = ["dep:serde"]
+
+[dependencies]
+arc-swap = "1.7"
+thiserror = "2"
+sha2 = { version = "0.10", default-features = false }
+subtle = { version = "2", default-features = false }
+serde = { version = "1", default-features = false, features = ["std", "derive", "rc"], optional = true }
+tokio = { version = "1", default-features = false, features = ["rt", "net", "sync", "time", "signal", "macros"], optional = true }
+axum = { version = "0.8", default-features = false, features = ["http1", "http2", "json", "tokio", "matched-path"], optional = true }
+tracing = { version = "0.1", default-features = false, features = ["std"], optional = true }
+serde_json = { version = "1", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "time", "test-util"] }
+tower = { version = "0.5", default-features = false, features = ["util"] }
