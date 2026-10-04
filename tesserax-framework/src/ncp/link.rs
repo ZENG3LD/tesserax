@@ -11,6 +11,7 @@
 //! HTTP bytes cross). Attach admission is a mutual
 //! [`link_proof`](tesserax_transport::proof::link_proof) exchange; neither
 //! side sends application data before its peer's proof matched.
+//! The network under a remote down-link is a WireGuard tunnel, not TLS in front of HTTP.
 
 use std::collections::BTreeMap;
 use std::pin::Pin;

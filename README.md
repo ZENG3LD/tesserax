@@ -12,5 +12,6 @@ Back-office library family on a single-writer core.
 | `tesserax-transport` | Owner-only local IPC, link proof, call-home, TLS, outbound webhook / SMTP / Telegram. |
 | `tesserax-mcp` | MCP JSON-RPC tool server with a byte budget over the HTTP route table. |
 | `tesserax-framework` | Single-writer kernel and runtime, effect executors, HTTP and local shells, NCP tier scaffolding (`node` / `c2` / `hq`), a REST + MCP verb surface (`agent`), and a process plugin host (`plugins`). |
+| `tesserax-wireguard` | Kernel WireGuard link, brought up with `ip` and `wg`. No userspace UDP stack. |
 
 Licensed under either of MIT or Apache-2.0, at your option.

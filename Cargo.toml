@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["tesserax", "tesserax-auth", "tesserax-framework", "tesserax-http", "tesserax-mcp", "tesserax-secrets", "tesserax-store", "tesserax-transport"]
+members = ["tesserax", "tesserax-auth", "tesserax-framework", "tesserax-http", "tesserax-mcp", "tesserax-secrets", "tesserax-store", "tesserax-transport", "tesserax-wireguard"]
 
 [workspace.package]
 version = "0.1.1"
