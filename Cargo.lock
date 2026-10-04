@@ -1886,7 +1886,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "arc-swap",
  "axum",
@@ -1902,7 +1902,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-auth"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "getrandom 0.3.4",
@@ -1918,7 +1918,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-framework"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "bytes",
@@ -1944,7 +1944,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-http"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "base64 0.22.1",
@@ -1971,7 +1971,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-mcp"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "serde",
@@ -1985,7 +1985,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-secrets"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aes-gcm",
  "base64 0.22.1",
@@ -2009,7 +2009,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-store"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blake3",
  "chacha20poly1305",
@@ -2028,7 +2028,7 @@ dependencies = [
 
 [[package]]
 name = "tesserax-transport"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "base64 0.22.1",

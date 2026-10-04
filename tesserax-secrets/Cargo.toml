@@ -20,7 +20,7 @@ opctl = ["dep:reqwest", "dep:tokio", "dep:clap"]
 peer-trust = []
 
 [dependencies]
-tesserax = { path = "../tesserax", version = "0.1.0", default-features = false }
+tesserax = { path = "../tesserax", version = "0.1.1", default-features = false }
 sha2 = "0.10"
 blake3 = "1"
 chacha20poly1305 = "0.10"

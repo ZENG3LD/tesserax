@@ -23,7 +23,7 @@ tls = ["server", "dep:rustls", "dep:tokio-rustls"]
 egress = ["dep:reqwest", "dep:rustls", "dep:tokio-rustls", "dep:webpki-roots", "dep:base64", "dep:tracing", "tokio/time"]
 
 [dependencies]
-tesserax = { path = "../tesserax", version = "0.1.0", default-features = false }
+tesserax = { path = "../tesserax", version = "0.1.1", default-features = false }
 tokio = { version = "1", default-features = false, features = ["net", "io-util", "rt", "sync", "time", "macros"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -55,4 +55,4 @@ windows-sys = { version = "0.61", features = [
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "time"] }
 rcgen = "0.13"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
-tesserax-http = { path = "../tesserax-http", version = "0.1.0" }
+tesserax-http = { path = "../tesserax-http", version = "0.1.1" }
