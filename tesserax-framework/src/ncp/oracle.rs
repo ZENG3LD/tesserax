@@ -243,8 +243,8 @@ pub struct Reconciled<'r, E> {
 }
 
 /// Splits a report's claimed membership into rostered (`known`) and
-/// everything else (`unresolved`). The mirage refusal as a function: an
-/// id a link reports cannot add itself to the fleet.
+/// everything else (`unresolved`). An id a link reports cannot add
+/// itself to the fleet.
 pub fn reconcile<'r, E: super::roster::RosterEntry>(
     roster: &'r Roster<E>,
     report: &impl Identified,

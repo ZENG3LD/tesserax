@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Back-office framework on tesserax: a single-writer kernel with a fixed-phase step, the runtime that owns it, effect executors that report results back as generation-checked observations, and HTTP / local shells plus a remote handle over the same port."
+description = "Back-office framework on tesserax: a single-writer kernel with a fixed-phase step, the runtime that owns it, effect executors that report results back as generation-checked observations, HTTP / local shells plus a remote handle over the same port, and a process plugin host."
 keywords = ["backend", "server", "framework", "single-writer"]
 categories = ["web-programming::http-server"]
 readme = "README.md"
@@ -79,6 +79,10 @@ agent = [
     "dep:serde",
     "dep:serde_json",
 ]
+# Process plugin host: a manifest, a restart policy, and a capability
+# token passed only through the environment name the manifest chooses.
+# No in-process shared library and no WebAssembly host.
+plugins = ["dep:zeroize"]
 # `shell::RemoteHandle`: the root `Port` over the wire of either shell
 # (HTTP + SSE, or the owner-only local link).
 client = [

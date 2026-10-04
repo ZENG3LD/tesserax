@@ -135,7 +135,7 @@ credential = {{ file = "{}" }}
     let _ = std::fs::remove_dir_all(&dir);
 }
 
-// ── reconcile: the mirage refusal ───────────────────────────────────────
+// ── reconcile: a reported id cannot join the roster ─────────────────────
 
 struct Claim(Vec<EntryId>);
 

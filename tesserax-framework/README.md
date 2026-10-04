@@ -6,4 +6,6 @@ Transport shells over the same port: `http_shell` (four self-describing routes w
 
 NCP tier scaffolding is in this release behind features `node`, `c2`, and `hq`: a shared roster, down link, fleet oracle and attach listener, plus one builder per tier (`node-os` supervises the node's services as OS processes). The REST + MCP verb surface is in this release behind feature `agent`: one `Verb` is answered over REST (`POST /v1/verbs/{name}`) and MCP (`tools/call`) from a single registration, and every mutating call is audited inside that dispatch.
 
+Feature `plugins` is a process host only: a manifest, a restart policy, and a capability token passed through an environment variable the manifest names. Shared-library and WebAssembly hosts are not in this release.
+
 Licensed under either of MIT or Apache-2.0, at your option.

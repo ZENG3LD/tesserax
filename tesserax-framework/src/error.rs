@@ -6,8 +6,9 @@ use tesserax::swc::{DispatchError, SubscribeError};
 use crate::kernel::CoreError;
 use crate::runtime::RuntimeError;
 
-/// Anything the framework can fail with, by layer. Later layers (NCP,
-/// jobs, plugins) add variants.
+/// Anything the framework can fail with, by layer. Later layers (jobs)
+/// add variants. NCP and the process plugin host add theirs behind
+/// their features.
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum FrameworkError {
@@ -24,6 +25,10 @@ pub enum FrameworkError {
     #[cfg(feature = "ncp-shared")]
     #[error(transparent)]
     Ncp(#[from] crate::ncp::NcpError),
+    /// The process plugin host failed.
+    #[cfg(feature = "plugins")]
+    #[error(transparent)]
+    Plugin(#[from] crate::plugins::PluginError),
 }
 
 /// Why a shell or a [`RemoteHandle`](crate::shell::RemoteHandle) call

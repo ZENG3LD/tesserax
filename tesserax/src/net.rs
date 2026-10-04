@@ -259,11 +259,11 @@ mod tests {
     fn cidr_v4_matches() {
         let c = Cidr::parse("10.0.0.0/8").unwrap();
         assert!(c.contains(ip("10.1.2.3")));
-        assert!(!c.contains(ip("11.0.0.0")));
+        assert!(!c.contains(ip("192.0.2.1")));
         assert!(
             Cidr::parse("0.0.0.0/0")
                 .unwrap()
-                .contains(ip("255.255.255.255"))
+                .contains(ip("203.0.113.255"))
         );
         let host = Cidr::parse("127.0.0.1").unwrap();
         assert!(host.contains(ip("127.0.0.1")));
@@ -311,19 +311,19 @@ mod tests {
         assert_eq!(CidrList::private_networks(), parsed);
         let l = CidrList::private_networks();
         assert!(l.matches(ip("172.16.0.1")));
-        assert!(!l.matches(ip("8.8.8.8")));
+        assert!(!l.matches(ip("192.0.2.8")));
         assert!(!l.matches(ip("2001:db8::1")));
     }
 
     #[test]
     fn untrusted_peer_ignores_headers() {
         let got = honest_client_ip(
-            ip("9.9.9.9"),
+            ip("192.0.2.9"),
             &CidrList::new(),
-            Some("1.2.3.4"),
-            Some("5.6.7.8"),
+            Some("192.0.2.4"),
+            Some("198.51.100.8"),
         );
-        assert_eq!(got, ip("9.9.9.9"));
+        assert_eq!(got, ip("192.0.2.9"));
     }
 
     #[test]
@@ -331,16 +331,16 @@ mod tests {
         let t = CidrList::private_networks();
         let peer = ip("127.0.0.1");
         assert_eq!(
-            honest_client_ip(peer, &t, Some("8.8.8.8, 10.0.0.1"), None),
-            ip("8.8.8.8")
+            honest_client_ip(peer, &t, Some("192.0.2.8, 10.0.0.1"), None),
+            ip("192.0.2.8")
         );
         assert_eq!(
             honest_client_ip(peer, &t, Some("10.0.0.5, 10.0.0.1"), None),
             ip("10.0.0.5")
         );
         assert_eq!(
-            honest_client_ip(peer, &t, None, Some(" 8.8.4.4 ")),
-            ip("8.8.4.4")
+            honest_client_ip(peer, &t, None, Some(" 198.51.100.4 ")),
+            ip("198.51.100.4")
         );
         assert_eq!(honest_client_ip(peer, &t, Some("not-an-ip,  "), None), peer);
     }

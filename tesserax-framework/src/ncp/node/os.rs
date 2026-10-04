@@ -4,12 +4,12 @@
 //! may NOT touch an OS process", and the grep gate in
 //! `tests/ncp_gates.rs` keeps it that way.
 //!
-//! Scope note (design §5.4): the supervisor core of the owner's existing
-//! watchdog (adopt of already-running processes, stale-binary kill,
-//! heartbeat reconciliation) moves here **last and only with the owner's
-//! word**. What stands here now is the generic spine — spawn spec,
-//! restart policy, kill, supervise loop — written from the design's
-//! written rules; the watchdog's own behaviours are not ported.
+//! Scope note (design §5.4): adopting already-running processes, killing
+//! a stale binary, and reconciling heartbeats moves here **last and only
+//! with the owner's word**. What stands here now is the generic spine —
+//! spawn spec, restart policy, kill, supervise loop — written from the
+//! design's written rules; those adopt and stale-binary behaviours are
+//! not ported.
 
 use std::collections::BTreeMap;
 use std::process::Stdio;
@@ -116,8 +116,8 @@ struct Supervised {
 
 /// The node's process supervisor: owns the children it spawned, reaps
 /// and — per policy — restarts them. Owns nothing it did not spawn
-/// (adoption of foreign processes is the watchdog behaviour that waits
-/// for the owner's word, see the module docs).
+/// (adoption of foreign processes waits for the owner's word, see the
+/// module docs).
 pub struct ProcessSupervisor {
     inner: Arc<Mutex<BTreeMap<String, Supervised>>>,
 }

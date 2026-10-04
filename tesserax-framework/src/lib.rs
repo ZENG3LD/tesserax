@@ -36,7 +36,7 @@
 //! # Contract
 //!
 //! ```text
-//! Role:      kernel (module kernel); shell (modules runtime, shell)
+//! Role:      kernel (module kernel); shell (modules runtime, shell, and, behind their features, ncp, agent, plugins)
 //! Owns:      the kernel of one Domain (single writer: domain, counters, step bookkeeping); per runtime: the
 //!            kernel side of one port, one bounded observation inbox, one executor.
 //! Exports:   Domain, Tick, Core, CoreResume, CoreStats, CoreError, ObservationDrops, Step, Counter, Exhausted;
@@ -50,11 +50,13 @@
 //!            LinkSpec, DialEntry, Roster, DownLink, AttachListener, Oracle, FleetCache, spawn_poller,
 //!            reconcile, PassthroughPolicy (c2), the tier builders, NcpError};
 //!            feature agent: agent::{Verb, VerbCx, VerbCode, VerbError, AgentDoor, AgentSurface,
-//!            VERBS_PATH_PREFIX}.
+//!            VERBS_PATH_PREFIX};
+//!            feature plugins: plugins::{PluginHost, PluginManifest, RestartPolicy, PluginError}.
 //! Imports:   tesserax (default-features = false), thiserror; feature tokio: tokio (rt, time);
 //!            feature store: tesserax-store; feature shell: tesserax-auth, tesserax-http,
 //!            tesserax-transport, axum, tokio, serde, tracing; feature client: tesserax-transport, hyper,
-//!            tokio, serde; feature agent: tesserax-auth, tesserax-http, tesserax-mcp, axum, serde.
+//!            tokio, serde; feature agent: tesserax-auth, tesserax-http, tesserax-mcp, axum, serde;
+//!            feature plugins: zeroize.
 //! Forbidden: in `kernel`: tokio, locks, channels, atomics, threads, fs, network (SWC law 3 — checked by
 //!            tests/kernel_purity.rs); a second door into the kernel beside the port and the observation
 //!            sink; product vocabulary.
@@ -79,6 +81,10 @@
 //! - `agent` — [`agent`]: one [`Verb`](agent::Verb) answered over REST
 //!   and MCP from a single registration, every mutating call audited
 //!   inside the shared dispatch.
+//! - `plugins` — [`plugins`]: a process host. Each plugin is a child
+//!   process with a manifest, a restart policy, and a capability token
+//!   delivered through a caller-chosen environment variable. There is
+//!   no in-process shared-library host and no WebAssembly host.
 //!
 //! Without features the dependency tree has no tokio, axum, tower,
 //! rusqlite or reqwest.
@@ -91,6 +97,8 @@ mod error;
 pub mod kernel;
 #[cfg(feature = "ncp-shared")]
 pub mod ncp;
+#[cfg(feature = "plugins")]
+pub mod plugins;
 pub mod runtime;
 #[cfg(any(feature = "shell", feature = "client"))]
 pub mod shell;
